@@ -11,7 +11,7 @@ npm install -g @skillboss/cli
 Or use with npx (no install):
 
 ```bash
-npx @skillboss/cli <command>
+npx -y @skillboss/cli <command>
 ```
 
 ## Authentication
@@ -277,9 +277,9 @@ Available on every command:
 No install needed — pass `--key` for one-shot usage:
 
 ```bash
-npx @skillboss/cli api types -k sk-xxx
-npx @skillboss/cli api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Hello"}]}' -k sk-xxx
-npx @skillboss/cli task image -b '{"prompt":"A sunset"}' -o sunset.png -k sk-xxx
+npx -y @skillboss/cli api types -k sk-xxx
+npx -y @skillboss/cli api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Hello"}]}' -k sk-xxx
+npx -y @skillboss/cli task image -b '{"prompt":"A sunset"}' -o sunset.png -k sk-xxx
 ```
 
 ## Configuration
