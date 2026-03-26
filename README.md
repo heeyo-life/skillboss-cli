@@ -11,7 +11,7 @@ npm install -g @skillboss/cli
 Or use with npx (no install):
 
 ```bash
-npx @skillboss/cli <command>
+npx skillboss <command>
 ```
 
 ## Authentication
@@ -37,8 +37,6 @@ Get your API key at [skillboss.co/console](https://skillboss.co/console).
 ```
 skb api                    Browse the API/model catalog
 skb task                   Smart AI task navigator
-skb email                  Send email
-skb skills                 List and invoke skills
 skb account                View balance and usage
 skb login                  Authenticate
 skb logout                 Remove credentials
@@ -191,32 +189,14 @@ Execute a multi-step workflow.
 skb task chain '[{"type":"stt"},{"type":"chat","capability":"translate to Chinese"}]'
 ```
 
-#### `skb task prefer [value]`
+#### `skb task email`
 
-Get or set model preference.
-
-```bash
-skb task prefer                # Show current
-skb task prefer price          # Optimize for price
-skb task prefer quality        # Optimize for quality
-skb task prefer off            # Clear preference
-```
-
----
-
-### `skb email`
-
-Send email via `POST /v1/send-email`.
+Send email.
 
 ```bash
-# Single email
-skb email --to user@example.com --subject "Hello" --html "<h1>Hi</h1>"
-
-# Multiple recipients
-skb email --to a@b.com,c@d.com --subject "Hi" --html "<p>Hello</p>"
-
-# Batch
-skb email --batch -b '[{"title":"Hi","body_html":"<p>Hey</p>","receivers":["a@b.com"]}]'
+skb task email --to user@example.com --subject "Hello" --html "<h1>Hi</h1>"
+skb task email --to a@b.com,c@d.com --subject "Hi" --html "<p>Hello</p>"
+skb task email --batch -b '[{"title":"Hi","body_html":"<p>Hey</p>","receivers":["a@b.com"]}]'
 ```
 
 | Flag | Description |
@@ -227,32 +207,17 @@ skb email --batch -b '[{"title":"Hi","body_html":"<p>Hey</p>","receivers":["a@b.
 | `--reply-to <emails>` | Reply-to addresses |
 | `--batch` | Batch mode (requires `-b`) |
 | `-b, --body <json>` | JSON body for batch mode |
-| `--raw` | Output raw JSON |
-| `-k, --key <key>` | API key override |
 
----
+#### `skb task prefer [value]`
 
-### `skb skills`
-
-List and invoke skills.
+Get or set model preference.
 
 ```bash
-# List available skills
-skb skills
-
-# Invoke a skill
-skb skills invoke skillboss -b '{"prompt": "Generate a report"}'
-skb skills invoke skillboss -b '{"prompt": "..."}' --budget 10
+skb task prefer                # Show current
+skb task prefer price          # Optimize for price
+skb task prefer quality        # Optimize for quality
+skb task prefer off            # Clear preference
 ```
-
-#### `skb skills invoke <name>`
-
-| Flag | Description |
-|------|-------------|
-| `-b, --body <json>` | JSON body with prompt |
-| `--budget <usd>` | Max budget in USD |
-| `--raw` | Output raw JSON |
-| `-k, --key <key>` | API key override |
 
 ---
 
@@ -312,9 +277,9 @@ Available on every command:
 No install needed — pass `--key` for one-shot usage:
 
 ```bash
-npx @skillboss/cli api types -k sk-xxx
-npx @skillboss/cli api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Hello"}]}' -k sk-xxx
-npx @skillboss/cli task image -b '{"prompt":"A sunset"}' -o sunset.png -k sk-xxx
+npx skillboss api types -k sk-xxx
+npx skillboss api call deepseek-v3 -b '{"messages":[{"role":"user","content":"Hello"}]}' -k sk-xxx
+npx skillboss task image -b '{"prompt":"A sunset"}' -o sunset.png -k sk-xxx
 ```
 
 ## Configuration
