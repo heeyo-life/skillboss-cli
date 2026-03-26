@@ -1,13 +1,11 @@
 {
   "name": "@skillboss/cli",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "SkillBoss CLI — Trusted APIs and Skills for Agents",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "skb": "./dist/index.js",
-    "skillboss": "./dist/index.js",
-    "cli": "./dist/index.js"
+    "skb": "./dist/index.js"
   },
   "files": [
     "dist",
