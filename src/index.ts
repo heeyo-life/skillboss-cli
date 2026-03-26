@@ -9,7 +9,7 @@ import { emailCommand } from './commands/email.js';
 import { accountCommand } from './commands/account.js';
 import { loginCommand, logoutCommand, whoamiCommand } from './commands/auth.js';
 
-const VERSION = '2.0.0';
+const VERSION = '0.1.0';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function asyncAction(fn: (...args: any[]) => Promise<void>) {

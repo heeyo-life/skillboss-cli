@@ -1,6 +1,6 @@
 {
   "name": "@skillboss/cli",
-  "version": "2.0.0",
+  "version": "0.1.0",
   "description": "SkillBoss CLI — Trusted APIs and Skills for Agents",
   "type": "module",
   "main": "dist/index.js",
