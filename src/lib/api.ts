@@ -2,6 +2,7 @@ import { getApiKey, API_BASE_URL, WEB_BASE_URL } from '../config.js';
 
 const SOURCE_HEADER = 'x-skillboss-source';
 const SOURCE_VALUE = 'cli';
+const AGENT_ID = process.env.SKILLBOSS_AGENT_ID || '';
 
 export interface ApiRequestOptions {
   method?: string;
@@ -47,6 +48,7 @@ export async function apiRequest<T = unknown>(
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       [SOURCE_HEADER]: SOURCE_VALUE,
+      ...(AGENT_ID && { 'x-agent-id': AGENT_ID }),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
@@ -90,6 +92,7 @@ export async function apiRequestRaw(
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       [SOURCE_HEADER]: SOURCE_VALUE,
+      ...(AGENT_ID && { 'x-agent-id': AGENT_ID }),
     },
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
@@ -124,6 +127,7 @@ export async function webRequest<T = unknown>(
   const res = await fetch(`${baseUrl}${endpoint}`, {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
+      ...(AGENT_ID && { 'x-agent-id': AGENT_ID }),
     },
   });
 
