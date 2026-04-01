@@ -7,6 +7,7 @@ import { apiTypesCommand, apiListCommand, apiShowCommand } from './commands/apis
 import { emailCommand } from './commands/email.js';
 // import { skillsListCommand, skillsInvokeCommand } from './commands/skills.js';
 import { accountCommand } from './commands/account.js';
+import { jobCommand, jobListCommand } from './commands/job.js';
 import { loginCommand, logoutCommand, whoamiCommand } from './commands/auth.js';
 
 const VERSION = '0.1.0';
@@ -190,6 +191,43 @@ Don't know the params? Run: skb api show <model>
   }));
 
 // skb skills — disabled (backend 500)
+
+// ─────────────────────────────────────────────────────────────────────────────
+// skb job — Async job status & results
+// ─────────────────────────────────────────────────────────────────────────────
+
+const job = program
+  .command('job [job_id]')
+  .description('Fetch async job status/result')
+  .option('-w, --wait', 'Wait and poll until job completes')
+  .option('-o, --output <path>', 'Save result to file')
+  .option('--raw', 'Output raw JSON')
+  .option('-k, --key <key>', 'API key override')
+  .addHelpText('after', `
+Examples:
+  skb job job_1711900800_a3b2c1                  Check job status
+  skb job job_1711900800_a3b2c1 --wait           Wait until done
+  skb job job_1711900800_a3b2c1 --wait -o out.mp4  Wait + save to file
+  skb job list                                   List your jobs
+  skb job list --status running                  Filter by status
+  `)
+  .action(asyncAction(async (jobId: string | undefined, options) => {
+    if (!jobId || jobId === 'list') {
+      await jobListCommand(options);
+    } else {
+      await jobCommand(jobId, options);
+    }
+  }));
+
+job
+  .command('list')
+  .description('List your async jobs')
+  .option('--status <status>', 'Filter: queued | running | completed | failed')
+  .option('--raw', 'Output raw JSON')
+  .option('-k, --key <key>', 'API key override')
+  .action(asyncAction(async (options) => {
+    await jobListCommand(options);
+  }));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // skb account — Balance & usage
