@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { readFileSync } from 'fs';
 import { basename } from 'path';
-import { apiRequest, apiRequestRaw, formatApiError } from '../lib/api.js';
+import { apiRequest, apiRequestRaw, formatApiError, isAsyncJob, pollJob } from '../lib/api.js';
 import { printRaw, handleOutput } from '../lib/output.js';
 
 interface CallOptions {
@@ -115,6 +115,24 @@ export async function callCommand(model: string, options: CallOptions): Promise<
       method: 'POST',
       body: requestBody,
     }, options.key);
+
+    // Async job — server returned 202 with job_id, poll until done
+    if (isAsyncJob(result)) {
+      spinner.text = chalk.gray(`Job ${result.job_id} accepted, generating...`);
+      const finalResult = await pollJob(
+        result.job_id,
+        options.key,
+        (status) => { spinner.text = chalk.gray(`Job status: ${status}...`); },
+      );
+      spinner.stop();
+
+      if (options.raw) {
+        printRaw(finalResult);
+        return;
+      }
+      await displayResult(finalResult, options.output);
+      return;
+    }
 
     spinner.stop();
 

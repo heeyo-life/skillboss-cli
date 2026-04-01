@@ -169,3 +169,58 @@ export function formatApiError(error: unknown): string {
   }
   return 'Unknown error';
 }
+
+/**
+ * Check if an API response is an async job (202 Accepted).
+ */
+export function isAsyncJob(result: unknown): result is { status: 'accepted'; job_id: string; poll_url: string; model: string } {
+  return (
+    typeof result === 'object' && result !== null &&
+    (result as Record<string, unknown>).status === 'accepted' &&
+    typeof (result as Record<string, unknown>).job_id === 'string'
+  );
+}
+
+/**
+ * Poll an async job until it reaches a terminal state (completed/failed).
+ * Returns the final result or throws on failure.
+ */
+export async function pollJob(
+  jobId: string,
+  keyOverride?: string,
+  onStatus?: (status: string) => void,
+  intervalMs = 5000,
+  maxAttempts = 300,
+): Promise<Record<string, unknown>> {
+  const apiKey = resolveApiKey(keyOverride);
+
+  for (let i = 0; i < maxAttempts; i++) {
+    const res = await fetch(`${API_BASE_URL}/job/${jobId}`, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        [SOURCE_HEADER]: SOURCE_VALUE,
+        ...(AGENT_ID && { 'x-agent-id': AGENT_ID }),
+      },
+    });
+
+    if (!res.ok) {
+      throw new ApiError(`Failed to poll job: ${res.status}`, res.status);
+    }
+
+    const data = (await res.json()) as Record<string, unknown>;
+    const status = data.status as string;
+
+    if (onStatus) { onStatus(status); }
+
+    if (status === 'completed') {
+      return data.result as Record<string, unknown>;
+    }
+    if (status === 'failed') {
+      throw new ApiError((data.error as string) || 'Job failed', 500);
+    }
+
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+
+  throw new ApiError('Job polling timed out', 504);
+}
